@@ -15,6 +15,8 @@ const ApplicationForm = () => import('@/applications/pages/ApplicationForm')
 const ApplicationFormTitle = () => import('@/applications/components/ApplicationFormTitle')
 const ConflictResolutionSetup = () => import('@/votes/pages/ConflictSetup')
 const ConflictResolutionSetupTitle = () => import('@/votes/components/ConflictSetupTitle')
+const Unsubscribe = () => import('@/unsubscribe/pages/Unsubscribe')
+const UnsubscribeTitle = () => import('@/unsubscribe/components/UnsubscribeTitle')
 
 export default [
   {
@@ -147,6 +149,14 @@ export default [
     components: {
       default: ConflictResolutionSetup,
       header: ConflictResolutionSetupTitle,
+    },
+  },
+  {
+    name: 'unsubscribe',
+    path: 'unsubscribe/:token',
+    components: {
+      default: Unsubscribe,
+      header: UnsubscribeTitle,
     },
   },
 ]
