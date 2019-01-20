@@ -411,6 +411,7 @@
     "GROUP_LEAVE_INACTIVE": "was removed due to inactivity",
     "GROUP_CHANGE_PHOTO": "changed the group logo",
     "GROUP_DELETE_PHOTO": "deleted the group logo",
+    "MEMBER_REMOVED": "was removed due to group decision",
     "NOTHING_HAPPENEND": "Nothing happened so far...",
     "DETAILS": "More information"
   },
@@ -440,7 +441,12 @@
     "PICKUP_UPCOMING": "Reminder: You have a pickup at {time}",
     "PICKUP_DISABLED": "Pickup at {dateTime} was disabled",
     "PICKUP_ENABLED": "Pickup at {dateTime} was enabled again",
-    "PICKUP_MOVED": "Pickup was moved to {dateTime}"
+    "PICKUP_MOVED": "Pickup was moved to {dateTime}",
+    "CONFLICT_RESOLUTION_CASE_CREATED": "A discussion about {userName} was started",
+    "CONFLICT_RESOLUTION_CASE_CONTINUED": "The discussion about {userName} continues",
+    "CONFLICT_RESOLUTION_CASE_DECIDED": "The discussion about {userName} was decided",
+    "VOTING_ENDS_SOON": "Voting ends soon, don't forget to participate!",
+    "YOU_WERE_REMOVED": "You were removed from the group"
   },
   "OUTDATED_BROWSER": {
     "MESSAGE": "You are using an unsupported browser. {upgradeBrowser} to enjoy all features.",
