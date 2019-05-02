@@ -1,7 +1,11 @@
-import groupApplications from '@/applications/datastore/groupApplications'
+import applications from '@/applications/datastore/applications'
+import applicationsPlugin from '@/applications/datastore/applicationsPlugin'
 
 export default {
   modules: {
-    groupApplications,
+    applications,
   },
+  plugins: [
+    applicationsPlugin,
+  ],
 }

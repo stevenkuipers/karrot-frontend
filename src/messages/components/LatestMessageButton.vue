@@ -4,18 +4,19 @@
     flat
     dense
     round
-    @click="maybeOpen"
     :title="$t('GROUP.MESSAGES')"
+    @click="maybeOpen"
   >
     <QIcon
       name="fas fa-comments"
+      :class="{ hasUnread: unreadCount > 0 }"
     />
     <QChip
-      v-if="unreadCount > 0"
+      v-if="unseenCount > 0"
       floating
       :color="allUnreadMuted ? 'grey' : 'secondary'"
     >
-      {{ unreadCount > 9 ? '9+' : unreadCount }}
+      {{ unseenCount > 9 ? '9+' : unseenCount }}
     </QChip>
     <QPopover
       v-if="!$q.platform.is.mobile"
@@ -49,8 +50,14 @@ export default {
     QPopover,
     LatestMessages,
   },
+  data () {
+    return {
+      showing: false,
+    }
+  },
   computed: {
     ...mapGetters({
+      unseenCount: 'latestMessages/unseenCount',
       unreadCount: 'latestMessages/unreadCount',
       allUnreadMuted: 'latestMessages/allUnreadMuted',
     }),
@@ -63,15 +70,15 @@ export default {
       this.$emit('click')
     },
   },
-  data () {
-    return {
-      showing: false,
-    }
-  },
 }
 </script>
 
 <style lang="stylus" scoped>
+@import '~variables'
 .k-latest-messages-popover
   width 400px
+.q-icon:not(.hasUnread)
+  opacity $topbar-opacity-low
+.q-btn:hover .q-icon
+  opacity 1
 </style>

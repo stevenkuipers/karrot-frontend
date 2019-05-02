@@ -11,7 +11,7 @@ export default connect({
     currentUser: 'auth/user',
   },
   actionsToEvents: {
-    toggleEmailNotifications: 'conversations/maybeToggleEmailNotifications',
+    saveConversation: 'conversations/maybeSave',
   },
 })('DetailHeader', DetailHeaderUI)
 </script>

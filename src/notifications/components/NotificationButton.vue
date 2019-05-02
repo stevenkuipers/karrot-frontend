@@ -4,11 +4,12 @@
     flat
     dense
     round
-    @click="maybeOpen"
     :title="$t('NOTIFICATION_BELLS_LIST.TITLE')"
+    @click="maybeOpen"
   >
     <QIcon
       name="fas fa-bell"
+      :class="{ hasUnseen: unseenCount > 0 }"
     />
     <QChip
       v-if="unseenCount > 0"
@@ -49,6 +50,11 @@ export default {
     QPopover,
     Notifications,
   },
+  data () {
+    return {
+      showing: false,
+    }
+  },
   computed: {
     ...mapGetters({
       unseenCount: 'notifications/unseenCount',
@@ -66,15 +72,15 @@ export default {
       this.$emit('click')
     },
   },
-  data () {
-    return {
-      showing: false,
-    }
-  },
 }
 </script>
 
 <style lang="stylus" scoped>
+@import '~variables'
 .k-notifications-popover
   width 400px
+.q-icon:not(.hasUnseen)
+  opacity $topbar-opacity-low
+.q-btn:hover .q-icon
+  opacity 1
 </style>

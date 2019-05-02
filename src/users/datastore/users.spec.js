@@ -31,7 +31,7 @@ describe('users', () => {
       groups: require('@/groupInfo/datastore/groups').default,
       auth,
       history,
-      groupApplications,
+      applications,
       currentGroup: {
         getters: {
           value: () => ({ members: [1, 2], memberships: { 1: {}, 2: {} } }),
@@ -39,6 +39,11 @@ describe('users', () => {
         },
         actions: {
           selectFromCurrentUser: jest.fn(),
+        },
+      },
+      issues: {
+        actions: {
+          fetchOngoingByGroupId: jest.fn(),
         },
       },
     }, { plugins: [require('./users').plugin] })
@@ -76,7 +81,7 @@ describe('users', () => {
     },
   }
 
-  const groupApplications = {
+  const applications = {
     getters: {
       getByGroupId: () => () => {},
     },

@@ -1,12 +1,15 @@
 <template>
   <QBtn
-    icon="fab fa-discourse fa-fw"
     :title="$t('COMMUNITY_FEED.HEADER', { community: $t('COMMUNITY_FEED.HEADER_LINK') })"
     flat
     dense
     round
     @click="showing = !showing"
   >
+    <QIcon
+      name="fab fa-discourse fa-fw"
+      :class="{ hasUnread: unreadCount > 0 }"
+    />
     <QChip
       v-if="unreadCount > 0"
       floating
@@ -16,24 +19,24 @@
     </QChip>
     <Component
       :is="$q.platform.is.mobile ? 'QModal' : 'QPopover'"
-      @hide="mark"
+      v-model="showing"
       class="k-community-feed"
       :class="$q.platform.is.mobile && 'relative-position'"
-      v-model="showing"
+      @hide="mark"
     >
       <QBtn
         v-if="$q.platform.is.mobile"
         dense
         round
         color="secondary"
-        @click="showing = false"
         style="position: absolute; right: 10px; top: 2px"
+        @click="showing = false"
       >
         <QIcon name="fas fa-times" />
       </QBtn>
       <QList
-        link
         v-if="showing"
+        link
       >
         <QListHeader>
           <QIcon
@@ -139,15 +142,15 @@ export default {
       showing: false,
     }
   },
-  methods: {
-    ...mapActions({
-      mark: 'communityFeed/mark',
-    }),
-  },
   computed: {
     ...mapGetters({
       unreadCount: 'communityFeed/unreadCount',
       topics: 'communityFeed/topics',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      mark: 'communityFeed/mark',
     }),
   },
 }
@@ -160,5 +163,8 @@ export default {
   background linear-gradient(to right, $lightGreen, $lighterGreen)
 body.desktop .k-community-feed
   max-width 700px
-
+.q-icon:not(.hasUnread)
+  opacity $topbar-opacity-low
+.q-btn:hover .q-icon
+  opacity 1
 </style>

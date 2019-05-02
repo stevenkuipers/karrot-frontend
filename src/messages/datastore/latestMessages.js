@@ -11,6 +11,9 @@ function initialState () {
     threads: {},
     threadMessages: {},
     fetchInitialDone: false,
+    entryMeta: {
+      markedAt: null,
+    },
   }
 }
 
@@ -26,7 +29,7 @@ export default {
     unread: (state, getters) => {
       return {
         conversations: getters.conversations.filter(c => c.unreadMessageCount > 0),
-        threads: getters.threads.filter(t => t.unreadReplyCount > 0),
+        threads: getters.threads.filter(t => t.threadMeta.unreadReplyCount > 0),
       }
     },
     unreadCount: (state, getters) => {
@@ -34,9 +37,15 @@ export default {
     },
     allUnreadMuted: (state, getters) => {
       return (
-        getters.unread.conversations.filter(c => c.emailNotifications).length +
+        getters.unread.conversations.filter(c => !c.muted).length +
         getters.unread.threads.filter(t => !t.muted).length
       ) === 0
+    },
+    unseenCount: (state, getters) => {
+      const { markedAt } = state.entryMeta
+
+      return getters.unread.conversations.filter(c => c.latestMessage.createdAt > markedAt).length +
+        getters.unread.threads.filter(t => t.latestMessage.createdAt > markedAt).length
     },
     conversations: (state, getters, rootState, rootGetters) => {
       const enrichConversation = rootGetters['conversations/enrichConversation']
@@ -90,6 +99,11 @@ export default {
       async clear ({ commit }) {
         commit('clear')
       },
+      async markAllSeen ({ getters }) {
+        // we can skip marking if there are only seen notifications
+        if (!getters.unseenCount) return
+        conversationsAPI.markAllSeen()
+      },
     }),
     async fetch ({ dispatch }, { excludeRead = false } = {}) {
       const [conversationsAndRelated, threadsAndRelated] = await Promise.all([
@@ -100,7 +114,7 @@ export default {
       dispatch('updateConversationsAndRelated', conversationsAndRelated)
       dispatch('updateThreadsAndRelated', threadsAndRelated)
     },
-    updateConversationsAndRelated ({ commit, dispatch, rootState }, { conversations, messages, pickups, applications, usersInfo }) {
+    updateConversationsAndRelated ({ commit, dispatch, rootState }, { conversations, messages, pickups, applications, issues, usersInfo, meta }) {
       if (conversations) {
         commit('updateConversations', conversations)
 
@@ -114,14 +128,21 @@ export default {
         commit('pickups/update', pickups, { root: true })
       }
       if (applications) {
-        commit('groupApplications/update', applications, { root: true })
+        commit('applications/update', applications, { root: true })
         const users = applications.map(a => a.user)
         commit('users/update', users, { root: true })
+      }
+      if (issues) {
+        commit('issues/update', issues, { root: true })
       }
       if (usersInfo) {
         // contains only limited user info, so only update if we don't have the user already
         const users = usersInfo.filter(user => !rootState.users.entries[user.id])
         commit('users/update', users, { root: true })
+      }
+
+      if (meta) {
+        commit('setEntryMeta', meta)
       }
 
       // fetch related objects one-by-one, in case they haven't been delivered already
@@ -132,7 +153,7 @@ export default {
           dispatch('pickups/maybeFetch', conversation.targetId, { root: true })
         }
         else if (conversation.type === 'application') {
-          dispatch('groupApplications/maybeFetchOne', conversation.targetId, { root: true })
+          dispatch('applications/maybeFetchOne', conversation.targetId, { root: true })
         }
       }
     },
@@ -193,6 +214,9 @@ export default {
     },
     fetchInitialDone (state, value) {
       state.fetchInitialDone = value
+    },
+    setEntryMeta (state, data) {
+      state.entryMeta = data
     },
   },
 }

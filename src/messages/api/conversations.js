@@ -1,7 +1,8 @@
 import axios, { parseCursor } from '@/base/api/axios'
 import { convert as convertMessage } from './messages'
 import { convert as convertPickup } from '@/pickups/api/pickups'
-import { convert as convertApplication } from '@/applications/api/groupApplications'
+import { convert as convertApplication } from '@/applications/api/applications'
+import { convert as convertIssue } from '@/issues/api/issues'
 
 export default {
   async get (id) {
@@ -27,13 +28,12 @@ export default {
     }
   },
 
-  async mark (id, data) {
-    return (await axios.post(`/api/conversations/${id}/mark/`, data)).data
+  async save (id, data) {
+    return convert((await axios.patch(`/api/conversations/${id}/`, data)).data)
   },
 
-  async toggleEmailNotifications (id, value) {
-    const data = { 'emailNotifications': value }
-    return (await axios.post(`/api/conversations/${id}/email_notifications/`, data)).data
+  async markAllSeen () {
+    return (await axios.post(`/api/conversations/mark_all_seen/`)).data
   },
 }
 
@@ -43,7 +43,9 @@ function convertListResults (results) {
     messages: convertMessage(results.messages),
     pickups: convertPickup(results.pickups),
     applications: convertApplication(results.applications),
+    issues: convertIssue(results.issues),
     usersInfo: results.usersInfo,
+    meta: convertMeta(results.meta),
   }
 }
 
@@ -56,5 +58,12 @@ export function convert (val) {
       ...val,
       updatedAt: new Date(val.updatedAt),
     }
+  }
+}
+
+export function convertMeta (val) {
+  return {
+    ...val,
+    markedAt: new Date(val.markedAt),
   }
 }
